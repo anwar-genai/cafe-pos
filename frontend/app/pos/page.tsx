@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { menuApi, MenuItem } from '@/lib/api';
-import { ShoppingCart, Plus, Minus, Trash2, Search } from 'lucide-react';
+import { menuApi, orderApi, MenuItem } from '@/lib/api';
+import { ShoppingCart, Plus, Minus, Trash2, Search, CheckCircle } from 'lucide-react';
 
 interface CartItem extends MenuItem {
   quantity: number;
@@ -15,6 +15,8 @@ export default function POSPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [processingOrder, setProcessingOrder] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -66,15 +68,32 @@ export default function POSPage() {
     return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
-  const handleCheckout = () => {
-    if (cart.length === 0) {
-      alert('کارٹ خالی ہے');
-      return;
-    }
-    const total = calculateTotal();
-    if (confirm(`کل: Rs. ${total}\n\nمکمل کریں؟`)) {
-      alert('آرڈر مکمل!');
+  const handleCheckout = async () => {
+    if (processingOrder) return;
+    
+    setProcessingOrder(true);
+    try {
+      // Create order through API
+      const orderData = {
+        items: cart.map(item => ({
+          menu_item_id: item.id,
+          quantity: item.quantity,
+        })),
+      };
+
+      const order = await orderApi.createOrder(orderData);
+      
+      // Success! Clear cart and close modal
       setCart([]);
+      setShowCheckoutModal(false);
+      
+      // Show success message
+      alert(`✅ آرڈر مکمل!\n\nآرڈر نمبر: ${order.order_number}\nکل رقم: Rs. ${order.total_amount}`);
+    } catch (error) {
+      console.error('Failed to create order:', error);
+      alert('آرڈر بنانے میں ناکامی۔ دوبارہ کوشش کریں۔');
+    } finally {
+      setProcessingOrder(false);
     }
   };
 
@@ -191,13 +210,103 @@ export default function POSPage() {
                 <p className="text-xl font-bold" style={{ color: '#059669' }}>Rs. {calculateTotal().toFixed(2)}</p>
                 <p className="text-xl font-bold">کل:</p>
               </div>
-              <button onClick={handleCheckout} className="btn btn-success" style={{ width: '100%' }} disabled={cart.length === 0}>
+              <button 
+                onClick={() => setShowCheckoutModal(true)} 
+                className="btn btn-success" 
+                style={{ width: '100%' }} 
+                disabled={cart.length === 0}
+              >
+                <CheckCircle size={18} />
                 مکمل کریں
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Checkout Confirmation Modal */}
+      {showCheckoutModal && (
+        <div className="modal-overlay" onClick={() => !processingOrder && setShowCheckoutModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ 
+                width: '80px', 
+                height: '80px', 
+                margin: '0 auto 1.5rem',
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <CheckCircle size={48} color="white" />
+              </div>
+
+              <h2 className="text-xl font-bold mb-3">آرڈر کی تصدیق</h2>
+              
+              <div style={{ 
+                background: '#f9fafb', 
+                borderRadius: '0.75rem', 
+                padding: '1rem',
+                marginBottom: '1.5rem',
+                textAlign: 'right'
+              }}>
+                <div style={{ marginBottom: '0.75rem' }}>
+                  <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.25rem' }}>کل آئٹمز</p>
+                  <p className="font-bold">{cart.reduce((sum, item) => sum + item.quantity, 0)}</p>
+                </div>
+                
+                <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '0.75rem' }}>
+                  <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.25rem' }}>کل رقم</p>
+                  <p className="text-2xl font-bold" style={{ color: '#059669' }}>
+                    Rs. {calculateTotal().toFixed(2)}
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ 
+                background: '#fef3c7', 
+                border: '2px solid #f59e0b',
+                borderRadius: '0.5rem',
+                padding: '0.75rem',
+                marginBottom: '1.5rem',
+                fontSize: '0.85rem'
+              }}>
+                <p className="font-bold">کیا آپ یہ آرڈر مکمل کرنا چاہتے ہیں؟</p>
+              </div>
+
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setShowCheckoutModal(false)} 
+                  className="btn btn-secondary" 
+                  style={{ flex: 1 }}
+                  disabled={processingOrder}
+                >
+                  منسوخ
+                </button>
+                <button 
+                  onClick={handleCheckout} 
+                  className="btn btn-success" 
+                  style={{ flex: 1 }}
+                  disabled={processingOrder}
+                >
+                  {processingOrder ? (
+                    <span className="flex items-center gap-2">
+                      <span className="loading" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></span>
+                      جاری ہے...
+                    </span>
+                  ) : (
+                    <>
+                      <CheckCircle size={16} />
+                      تصدیق کریں
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
