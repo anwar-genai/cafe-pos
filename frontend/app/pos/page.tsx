@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { menuApi, orderApi, MenuItem } from '@/lib/api';
-import { ShoppingCart, Plus, Minus, Trash2, Search, CheckCircle } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2, Search, CheckCircle, X } from 'lucide-react';
 
 interface CartItem extends MenuItem {
   quantity: number;
@@ -16,7 +16,9 @@ export default function POSPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [processingOrder, setProcessingOrder] = useState(false);
+  const [completedOrder, setCompletedOrder] = useState<{ orderNumber: string; totalAmount: number } | null>(null);
 
   useEffect(() => {
     loadData();
@@ -33,7 +35,6 @@ export default function POSPage() {
       setCategories(cats);
     } catch (error) {
       console.error('Failed to load data:', error);
-      alert('ڈیٹا لوڈ کرنے میں ناکامی');
     } finally {
       setLoading(false);
     }
@@ -59,7 +60,7 @@ export default function POSPage() {
   };
 
   const clearCart = () => {
-    if (cart.length > 0 && confirm('کارٹ خالی کریں؟')) {
+    if (cart.length > 0) {
       setCart([]);
     }
   };
@@ -73,7 +74,6 @@ export default function POSPage() {
     
     setProcessingOrder(true);
     try {
-      // Create order through API
       const orderData = {
         items: cart.map(item => ({
           menu_item_id: item.id,
@@ -83,15 +83,20 @@ export default function POSPage() {
 
       const order = await orderApi.createOrder(orderData);
       
-      // Success! Clear cart and close modal
+      // Set completed order data
+      setCompletedOrder({
+        orderNumber: order.order_number,
+        totalAmount: order.total_amount,
+      });
+      
+      // Clear cart and close checkout modal
       setCart([]);
       setShowCheckoutModal(false);
       
-      // Show success message
-      alert(`✅ آرڈر مکمل!\n\nآرڈر نمبر: ${order.order_number}\nکل رقم: Rs. ${order.total_amount}`);
+      // Show success modal
+      setShowSuccessModal(true);
     } catch (error) {
       console.error('Failed to create order:', error);
-      alert('آرڈر بنانے میں ناکامی۔ دوبارہ کوشش کریں۔');
     } finally {
       setProcessingOrder(false);
     }
@@ -226,8 +231,8 @@ export default function POSPage() {
 
       {/* Checkout Confirmation Modal */}
       {showCheckoutModal && (
-        <div className="modal-overlay" onClick={() => !processingOrder && setShowCheckoutModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ maxWidth: '400px' }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ 
                 width: '80px', 
@@ -301,6 +306,91 @@ export default function POSPage() {
                       تصدیق کریں
                     </>
                   )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      {showSuccessModal && completedOrder && (
+        <div className="modal-overlay">
+          <div className="modal-content" style={{ maxWidth: '400px' }}>
+            <div style={{ textAlign: 'center' }}>
+              <button 
+                onClick={() => setShowSuccessModal(false)}
+                style={{
+                  position: 'absolute',
+                  top: '1rem',
+                  left: '1rem',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0.25rem'
+                }}
+              >
+                <X size={24} color="#6b7280" />
+              </button>
+
+              <div style={{ 
+                width: '100px', 
+                height: '100px', 
+                margin: '0 auto 1.5rem',
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                animation: 'bounce 0.5s ease'
+              }}>
+                <CheckCircle size={60} color="white" strokeWidth={3} />
+              </div>
+
+              <h2 className="text-2xl font-bold mb-2" style={{ color: '#059669' }}>آرڈر مکمل!</h2>
+              <p style={{ color: '#6b7280', marginBottom: '1.5rem', fontSize: '0.9rem' }}>آپ کا آرڈر کامیابی سے محفوظ ہو گیا</p>
+              
+              <div style={{ 
+                background: '#f9fafb', 
+                borderRadius: '0.75rem', 
+                padding: '1.5rem',
+                marginBottom: '1.5rem',
+                border: '2px solid #10b981'
+              }}>
+                <div style={{ marginBottom: '1rem' }}>
+                  <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.5rem' }}>آرڈر نمبر</p>
+                  <p className="font-bold text-lg" style={{ 
+                    fontFamily: 'monospace',
+                    background: 'white',
+                    padding: '0.5rem',
+                    borderRadius: '0.5rem'
+                  }}>
+                    {completedOrder.orderNumber}
+                  </p>
+                </div>
+                
+                <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
+                  <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.5rem' }}>کل رقم</p>
+                  <p className="text-2xl font-bold" style={{ color: '#059669' }}>
+                    Rs. {completedOrder.totalAmount.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <a 
+                  href="/reports"
+                  className="btn btn-secondary" 
+                  style={{ flex: 1, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  رپورٹس دیکھیں
+                </a>
+                <button 
+                  onClick={() => setShowSuccessModal(false)} 
+                  className="btn btn-success" 
+                  style={{ flex: 1 }}
+                >
+                  نیا آرڈر
                 </button>
               </div>
             </div>
