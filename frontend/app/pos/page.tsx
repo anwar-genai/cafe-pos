@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { menuApi, orderApi, MenuItem } from '@/lib/api';
-import { ShoppingCart, Plus, Minus, Trash2, Search, CheckCircle, X } from 'lucide-react';
+import { ShoppingCart, Plus, Minus, Trash2, Search, CheckCircle, X, AlertCircle } from 'lucide-react';
 
 interface CartItem extends MenuItem {
   quantity: number;
@@ -17,6 +17,8 @@ export default function POSPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [processingOrder, setProcessingOrder] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<{ orderNumber: string; totalAmount: number } | null>(null);
 
@@ -35,6 +37,8 @@ export default function POSPage() {
       setCategories(cats);
     } catch (error) {
       console.error('Failed to load data:', error);
+      setErrorMessage('ڈیٹا لوڈ کرنے میں ناکامی');
+      setShowErrorModal(true);
     } finally {
       setLoading(false);
     }
@@ -81,7 +85,9 @@ export default function POSPage() {
         })),
       };
 
+      console.log('Creating order with data:', orderData);
       const order = await orderApi.createOrder(orderData);
+      console.log('Order created successfully:', order);
       
       // Set completed order data
       setCompletedOrder({
@@ -97,6 +103,9 @@ export default function POSPage() {
       setShowSuccessModal(true);
     } catch (error) {
       console.error('Failed to create order:', error);
+      setErrorMessage('آرڈر بنانے میں ناکامی۔ براہ کرم یقینی بنائیں کہ بیک اینڈ چل رہا ہے۔');
+      setShowCheckoutModal(false);
+      setShowErrorModal(true);
     } finally {
       setProcessingOrder(false);
     }
@@ -231,8 +240,8 @@ export default function POSPage() {
 
       {/* Checkout Confirmation Modal */}
       {showCheckoutModal && (
-        <div className="modal-overlay">
-          <div className="modal-content" style={{ maxWidth: '400px' }}>
+        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget && !processingOrder) setShowCheckoutModal(false); }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ 
                 width: '80px', 
@@ -296,7 +305,7 @@ export default function POSPage() {
                   disabled={processingOrder}
                 >
                   {processingOrder ? (
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-2" style={{ justifyContent: 'center' }}>
                       <span className="loading" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></span>
                       جاری ہے...
                     </span>
@@ -315,8 +324,8 @@ export default function POSPage() {
 
       {/* Success Modal */}
       {showSuccessModal && completedOrder && (
-        <div className="modal-overlay">
-          <div className="modal-content" style={{ maxWidth: '400px' }}>
+        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowSuccessModal(false); }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
             <div style={{ textAlign: 'center' }}>
               <button 
                 onClick={() => setShowSuccessModal(false)}
@@ -341,8 +350,7 @@ export default function POSPage() {
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                animation: 'bounce 0.5s ease'
+                justifyContent: 'center'
               }}>
                 <CheckCircle size={60} color="white" strokeWidth={3} />
               </div>
@@ -393,6 +401,72 @@ export default function POSPage() {
                   نیا آرڈر
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Modal */}
+      {showErrorModal && (
+        <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowErrorModal(false); }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+            <div style={{ textAlign: 'center' }}>
+              <button 
+                onClick={() => setShowErrorModal(false)}
+                style={{
+                  position: 'absolute',
+                  top: '1rem',
+                  left: '1rem',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '0.25rem'
+                }}
+              >
+                <X size={24} color="#6b7280" />
+              </button>
+
+              <div style={{ 
+                width: '80px', 
+                height: '80px', 
+                margin: '0 auto 1.5rem',
+                background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <AlertCircle size={48} color="white" />
+              </div>
+
+              <h2 className="text-xl font-bold mb-2" style={{ color: '#dc2626' }}>خرابی!</h2>
+              <p style={{ color: '#6b7280', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+                {errorMessage}
+              </p>
+
+              <div style={{ 
+                background: '#fee2e2', 
+                border: '2px solid #dc2626',
+                borderRadius: '0.5rem',
+                padding: '0.75rem',
+                marginBottom: '1.5rem',
+                fontSize: '0.85rem',
+                textAlign: 'right'
+              }}>
+                <p className="font-bold" style={{ marginBottom: '0.5rem' }}>چیک کریں:</p>
+                <ul style={{ listStyle: 'none', padding: 0 }}>
+                  <li>✓ بیک اینڈ چل رہا ہے (http://localhost:8000)</li>
+                  <li>✓ انٹرنیٹ کنکشن فعال ہے</li>
+                </ul>
+              </div>
+
+              <button 
+                onClick={() => setShowErrorModal(false)} 
+                className="btn btn-danger" 
+                style={{ width: '100%' }}
+              >
+                بند کریں
+              </button>
             </div>
           </div>
         </div>
