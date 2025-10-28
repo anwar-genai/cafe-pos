@@ -8,10 +8,10 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Quetta Arsalan Cafe POS System")
 
-# Configure CORS
+# Configure CORS - Allow all origins for development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_origins=["*"],  # Allow all origins for development
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
