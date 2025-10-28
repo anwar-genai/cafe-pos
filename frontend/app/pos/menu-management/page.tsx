@@ -117,7 +117,7 @@ export default function MenuManagementPage() {
         <h1 className="text-2xl font-bold">مینیو کا انتظام</h1>
       </div>
 
-      <div className="flex gap-2 mb-3 flex-wrap">
+      <div className="filter-controls">
         <button onClick={() => { setFormData({ name_ur: '', name_en: '', price: 0, category: '', is_available: true }); setShowAddModal(true); }} className="btn btn-success btn-sm">
           <Plus size={16} />
           نیا آئٹم

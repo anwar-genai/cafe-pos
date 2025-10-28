@@ -133,7 +133,7 @@ export default function POSPage() {
         <h1 className="text-xl font-bold">POS سسٹم</h1>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '0.75rem' }}>
+      <div className="pos-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '0.75rem' }}>
         {/* Menu Section */}
         <div>
           <div className="filter-controls">
@@ -187,7 +187,7 @@ export default function POSPage() {
               </h2>
             </div>
 
-            <div style={{ maxHeight: 'calc(100vh - 280px)', overflowY: 'auto', marginBottom: '0.75rem' }}>
+            <div className="cart-container" style={{ maxHeight: 'calc(100vh - 280px)', overflowY: 'auto', marginBottom: '0.75rem' }}>
               {cart.length === 0 ? (
                 <p className="text-center text-gray-600" style={{ padding: '1.5rem', fontSize: '0.8rem' }}>خالی کارٹ</p>
               ) : (
@@ -206,7 +206,7 @@ export default function POSPage() {
 
                       <div className="flex justify-between items-center">
                         <p className="font-bold" style={{ color: '#059669', fontSize: '0.8rem' }}>Rs. {(item.price * item.quantity).toFixed(2)}</p>
-                        <div className="flex items-center gap-1">
+                        <div className="cart-controls flex items-center gap-1">
                           <button onClick={() => updateQuantity(item.id, item.quantity - 1)} style={{ width: '20px', height: '20px', borderRadius: '0.25rem', border: '1px solid #d1d5db', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <Minus size={10} />
                           </button>

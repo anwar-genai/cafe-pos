@@ -352,6 +352,43 @@ tbody tr:hover {
   margin: 0.25rem 0;
 }
 
+/* Stats grid responsive */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .stat-card {
+    padding: 0.75rem;
+  }
+  
+  .stat-value {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
+  .stat-card {
+    padding: 0.6rem;
+  }
+  
+  .stat-value {
+    font-size: 1.1rem;
+  }
+}
+
 /* Badge */
 .badge {
   padding: 0.2rem 0.5rem;
@@ -519,15 +556,269 @@ tbody tr:hover {
   font-size: 1rem;
 }
 
-/* Responsive improvements */
+/* Mobile and Tablet Responsive Design */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0.5rem;
+  }
+  
+  .menu-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.4rem;
+  }
+  
+  .menu-item {
+    padding: 0.5rem;
+  }
+  
+  .menu-item h3 {
+    font-size: 0.75rem;
+    line-height: 1.1;
+  }
+  
+  .menu-item .price {
+    font-size: 0.8rem;
+  }
+  
+  .menu-item .category {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.3rem;
+  }
+}
+
 @media (max-width: 768px) {
   .container {
+    padding: 0.4rem;
+  }
+  
+  /* Stack layout for mobile */
+  .pos-layout {
+    display: block !important;
+  }
+  
+  .pos-layout > div:first-child {
+    margin-bottom: 0.75rem;
+  }
+  
+  .pos-layout > div:last-child {
+    position: relative !important;
+    top: auto !important;
+  }
+  
+  .menu-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.3rem;
+  }
+  
+  .menu-item {
+    padding: 0.4rem;
+  }
+  
+  .menu-item h3 {
+    font-size: 0.7rem;
+    line-height: 1.1;
+  }
+  
+  .menu-item .price {
+    font-size: 0.75rem;
+  }
+  
+  .menu-item .category {
+    font-size: 0.55rem;
+    padding: 0.1rem 0.25rem;
+  }
+  
+  /* Mobile filter controls */
+  .filter-controls {
+    flex-direction: column;
+    gap: 0.4rem;
+    align-items: stretch;
+  }
+  
+  .search-container {
+    min-width: auto;
+  }
+  
+  .filter-controls select {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  /* Mobile cart */
+  .cart-container {
+    max-height: 50vh;
+  }
+  
+  .cart-item {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  /* Mobile buttons */
+  .btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .btn-sm {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+  }
+  
+  .btn-xs {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.7rem;
+  }
+  
+  /* Mobile table */
+  table {
+    font-size: 0.7rem;
+  }
+  
+  th, td {
+    padding: 0.4rem 0.3rem;
+  }
+  
+  /* Mobile modal */
+  .modal-content {
+    width: 95%;
+    max-width: none;
+    margin: 0.5rem;
+    padding: 1rem;
+    max-height: 90vh;
+  }
+  
+  /* Mobile hero */
+  .hero {
+    padding: 1.5rem 0.5rem;
+  }
+  
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+  
+  .hero p {
+    font-size: 0.9rem;
+  }
+  
+  /* Mobile navigation cards */
+  .nav-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .nav-card {
+    padding: 1rem;
+  }
+  
+  .nav-card h3 {
+    font-size: 0.9rem;
+  }
+  
+  .nav-card p {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0.3rem;
+  }
+  
+  .menu-grid {
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 0.25rem;
+  }
+  
+  .menu-item {
+    padding: 0.35rem;
+  }
+  
+  .menu-item h3 {
+    font-size: 0.65rem;
+    line-height: 1.1;
+  }
+  
+  .menu-item .price {
+    font-size: 0.7rem;
+  }
+  
+  .menu-item .category {
+    font-size: 0.5rem;
+    padding: 0.05rem 0.2rem;
+  }
+  
+  /* Extra small mobile buttons */
+  .btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.75rem;
+  }
+  
+  .btn-sm {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.7rem;
+  }
+  
+  .btn-xs {
+    padding: 0.25rem 0.4rem;
+    font-size: 0.65rem;
+  }
+  
+  /* Extra small mobile modal */
+  .modal-content {
+    width: 98%;
+    margin: 0.25rem;
     padding: 0.75rem;
+  }
+  
+  /* Extra small mobile table */
+  table {
+    font-size: 0.65rem;
+  }
+  
+  th, td {
+    padding: 0.3rem 0.2rem;
+  }
+  
+  /* Extra small mobile hero */
+  .hero h1 {
+    font-size: 1.25rem;
+  }
+  
+  .hero p {
+    font-size: 0.8rem;
+  }
+  
+  /* Extra small mobile navigation */
+  .nav-grid {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+  
+  .nav-card {
+    padding: 0.75rem;
+  }
+  
+  .nav-card h3 {
+    font-size: 0.85rem;
+  }
+  
+  .nav-card p {
+    font-size: 0.7rem;
+  }
+}
+
+/* Tablet specific styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .pos-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 0.75rem;
   }
   
   .menu-grid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 0.4rem;
+    gap: 0.5rem;
   }
   
   .menu-item {
@@ -540,6 +831,83 @@ tbody tr:hover {
   
   .menu-item .price {
     font-size: 0.85rem;
+  }
+  
+  .filter-controls {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .search-container {
+    min-width: 180px;
+  }
+}
+
+/* Touch-friendly improvements for mobile */
+@media (max-width: 768px) {
+  .menu-item {
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  input, select, textarea {
+    min-height: 44px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Touch-friendly cart controls */
+  .cart-controls button {
+    min-width: 32px;
+    min-height: 32px;
+  }
+  
+  /* Better spacing for touch */
+  .cart-item {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Touch-friendly modal buttons */
+  .modal-content .btn {
+    min-height: 48px;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Landscape mobile orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+  .pos-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 0.5rem;
+  }
+  
+  .menu-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 0.4rem;
+  }
+  
+  .cart-container {
+    max-height: 60vh;
+  }
+  
+  .hero {
+    padding: 1rem 0.5rem;
+  }
+  
+  .hero h1 {
+    font-size: 1.25rem;
+  }
+  
+  .hero p {
+    font-size: 0.8rem;
   }
 }
 
