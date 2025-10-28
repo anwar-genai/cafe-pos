@@ -130,42 +130,45 @@ export default function POSPage() {
     <div className="container">
       <div className="flex items-center justify-between mb-3" style={{ color: 'white' }}>
         <a href="/" className="btn btn-secondary btn-sm">واپس</a>
-        <h1 className="text-2xl font-bold">POS سسٹم</h1>
+        <h1 className="text-xl font-bold">POS سسٹم</h1>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '0.75rem' }}>
         {/* Menu Section */}
         <div>
-          <div className="flex gap-2 mb-3 flex-wrap">
-            <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
-              <Search size={18} style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#6b7280' }} />
+          <div className="filter-controls">
+            <div className="search-container">
+              <Search size={16} className="search-icon" />
               <input
                 type="text"
                 placeholder="تلاش..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{ paddingRight: '2.5rem' }}
               />
             </div>
             
-            <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} style={{ width: 'auto', minWidth: '120px' }}>
+            <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
               <option value="">تمام</option>
               {categories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
             </select>
+
+            <div style={{ marginRight: 'auto', color: 'white', fontSize: '0.8rem', padding: '0.4rem' }}>
+              {filteredItems.length} آئٹمز
+            </div>
           </div>
 
           <div className="menu-grid">
             {filteredItems.map((item) => (
               <div key={item.id} className="menu-item" onClick={() => addToCart(item)}>
-                <h3 className="font-bold" style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>{item.name_ur}</h3>
-                <p className="font-bold" style={{ color: '#059669', fontSize: '1.1rem' }}>Rs. {item.price}</p>
-                {item.category && <p style={{ fontSize: '0.7rem', color: '#6b7280', marginTop: '0.25rem' }}>{item.category}</p>}
+                <h3>{item.name_ur}</h3>
+                <div className="price">Rs. {item.price}</div>
+                {item.category && <div className="category">{item.category}</div>}
               </div>
             ))}
           </div>
 
           {filteredItems.length === 0 && (
-            <div className="card text-center" style={{ padding: '3rem' }}>
+            <div className="card text-center" style={{ padding: '2rem' }}>
               <p className="text-gray-600">کوئی آئٹم نہیں</p>
             </div>
           )}
@@ -174,42 +177,42 @@ export default function POSPage() {
         {/* Cart Section */}
         <div>
           <div className="card" style={{ position: 'sticky', top: '1rem' }}>
-            <div className="flex items-center justify-between mb-3">
-              <button onClick={clearCart} className="btn btn-danger btn-sm" disabled={cart.length === 0}>
-                <Trash2 size={14} />
+            <div className="flex items-center justify-between mb-2">
+              <button onClick={clearCart} className="btn btn-danger btn-xs" disabled={cart.length === 0}>
+                <Trash2 size={12} />
               </button>
               <h2 className="text-lg font-bold flex items-center gap-2">
-                <ShoppingCart size={20} />
+                <ShoppingCart size={18} />
                 کارٹ ({cart.length})
               </h2>
             </div>
 
-            <div style={{ maxHeight: 'calc(100vh - 320px)', overflowY: 'auto', marginBottom: '1rem' }}>
+            <div style={{ maxHeight: 'calc(100vh - 280px)', overflowY: 'auto', marginBottom: '0.75rem' }}>
               {cart.length === 0 ? (
-                <p className="text-center text-gray-600" style={{ padding: '2rem', fontSize: '0.9rem' }}>خالی کارٹ</p>
+                <p className="text-center text-gray-600" style={{ padding: '1.5rem', fontSize: '0.8rem' }}>خالی کارٹ</p>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                   {cart.map((item) => (
                     <div key={item.id} className="cart-item">
-                      <div className="flex justify-between items-start mb-2">
+                      <div className="flex justify-between items-start mb-1">
                         <button onClick={() => updateQuantity(item.id, 0)} style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', padding: '0' }}>
-                          <Trash2 size={14} />
+                          <Trash2 size={12} />
                         </button>
                         <div style={{ flex: 1, textAlign: 'right' }}>
-                          <p className="font-bold" style={{ fontSize: '0.9rem' }}>{item.name_ur}</p>
-                          <p style={{ fontSize: '0.75rem', color: '#6b7280' }}>Rs. {item.price}</p>
+                          <p className="font-bold" style={{ fontSize: '0.8rem' }}>{item.name_ur}</p>
+                          <p style={{ fontSize: '0.7rem', color: '#6b7280' }}>Rs. {item.price}</p>
                         </div>
                       </div>
 
                       <div className="flex justify-between items-center">
-                        <p className="font-bold" style={{ color: '#059669' }}>Rs. {(item.price * item.quantity).toFixed(2)}</p>
-                        <div className="flex items-center gap-2">
-                          <button onClick={() => updateQuantity(item.id, item.quantity - 1)} style={{ width: '24px', height: '24px', borderRadius: '0.25rem', border: '1px solid #d1d5db', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Minus size={12} />
+                        <p className="font-bold" style={{ color: '#059669', fontSize: '0.8rem' }}>Rs. {(item.price * item.quantity).toFixed(2)}</p>
+                        <div className="flex items-center gap-1">
+                          <button onClick={() => updateQuantity(item.id, item.quantity - 1)} style={{ width: '20px', height: '20px', borderRadius: '0.25rem', border: '1px solid #d1d5db', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Minus size={10} />
                           </button>
-                          <span style={{ minWidth: '24px', textAlign: 'center', fontWeight: 'bold', fontSize: '0.9rem' }}>{item.quantity}</span>
-                          <button onClick={() => updateQuantity(item.id, item.quantity + 1)} style={{ width: '24px', height: '24px', borderRadius: '0.25rem', border: '1px solid #d1d5db', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Plus size={12} />
+                          <span style={{ minWidth: '20px', textAlign: 'center', fontWeight: 'bold', fontSize: '0.8rem' }}>{item.quantity}</span>
+                          <button onClick={() => updateQuantity(item.id, item.quantity + 1)} style={{ width: '20px', height: '20px', borderRadius: '0.25rem', border: '1px solid #d1d5db', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Plus size={10} />
                           </button>
                         </div>
                       </div>
@@ -219,10 +222,10 @@ export default function POSPage() {
               )}
             </div>
 
-            <div style={{ borderTop: '2px solid #e5e7eb', paddingTop: '1rem' }}>
-              <div className="flex justify-between mb-3">
-                <p className="text-xl font-bold" style={{ color: '#059669' }}>Rs. {calculateTotal().toFixed(2)}</p>
-                <p className="text-xl font-bold">کل:</p>
+            <div className="cart-summary">
+              <div className="cart-total">
+                <p className="font-bold">کل:</p>
+                <p className="amount">Rs. {calculateTotal().toFixed(2)}</p>
               </div>
               <button 
                 onClick={() => setShowCheckoutModal(true)} 
@@ -230,7 +233,7 @@ export default function POSPage() {
                 style={{ width: '100%' }} 
                 disabled={cart.length === 0}
               >
-                <CheckCircle size={18} />
+                <CheckCircle size={16} />
                 مکمل کریں
               </button>
             </div>
@@ -241,50 +244,35 @@ export default function POSPage() {
       {/* Checkout Confirmation Modal */}
       {showCheckoutModal && (
         <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget && !processingOrder) setShowCheckoutModal(false); }}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ 
-                width: '80px', 
-                height: '80px', 
-                margin: '0 auto 1.5rem',
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <CheckCircle size={48} color="white" />
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="order-confirmation">
+              <div className="confirmation-icon">
+                <CheckCircle size={32} color="white" />
               </div>
 
-              <h2 className="text-xl font-bold mb-3">آرڈر کی تصدیق</h2>
+              <h2 className="text-lg font-bold mb-2">آرڈر کی تصدیق</h2>
               
-              <div style={{ 
-                background: '#f9fafb', 
-                borderRadius: '0.75rem', 
-                padding: '1rem',
-                marginBottom: '1.5rem',
-                textAlign: 'right'
-              }}>
-                <div style={{ marginBottom: '0.75rem' }}>
-                  <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.25rem' }}>کل آئٹمز</p>
-                  <p className="font-bold">{cart.reduce((sum, item) => sum + item.quantity, 0)}</p>
+              <div className="order-summary">
+                <div className="order-summary-item">
+                  <span>کل آئٹمز</span>
+                  <span className="font-bold">{cart.reduce((sum, item) => sum + item.quantity, 0)}</span>
                 </div>
                 
-                <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '0.75rem' }}>
-                  <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.25rem' }}>کل رقم</p>
-                  <p className="text-2xl font-bold" style={{ color: '#059669' }}>
+                <div className="order-summary-item">
+                  <span>کل رقم</span>
+                  <span className="font-bold" style={{ color: '#059669' }}>
                     Rs. {calculateTotal().toFixed(2)}
-                  </p>
+                  </span>
                 </div>
               </div>
 
               <div style={{ 
                 background: '#fef3c7', 
                 border: '2px solid #f59e0b',
-                borderRadius: '0.5rem',
-                padding: '0.75rem',
-                marginBottom: '1.5rem',
-                fontSize: '0.85rem'
+                borderRadius: '0.4rem',
+                padding: '0.6rem',
+                marginBottom: '1rem',
+                fontSize: '0.8rem'
               }}>
                 <p className="font-bold">کیا آپ یہ آرڈر مکمل کرنا چاہتے ہیں؟</p>
               </div>
@@ -306,12 +294,12 @@ export default function POSPage() {
                 >
                   {processingOrder ? (
                     <span className="flex items-center gap-2" style={{ justifyContent: 'center' }}>
-                      <span className="loading" style={{ width: '16px', height: '16px', borderWidth: '2px' }}></span>
+                      <span className="loading" style={{ width: '14px', height: '14px', borderWidth: '2px' }}></span>
                       جاری ہے...
                     </span>
                   ) : (
                     <>
-                      <CheckCircle size={16} />
+                      <CheckCircle size={14} />
                       تصدیق کریں
                     </>
                   )}
@@ -325,61 +313,62 @@ export default function POSPage() {
       {/* Success Modal */}
       {showSuccessModal && completedOrder && (
         <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowSuccessModal(false); }}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
-            <div style={{ textAlign: 'center' }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="order-confirmation">
               <button 
                 onClick={() => setShowSuccessModal(false)}
                 style={{
                   position: 'absolute',
-                  top: '1rem',
-                  left: '1rem',
+                  top: '0.75rem',
+                  left: '0.75rem',
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
                   padding: '0.25rem'
                 }}
               >
-                <X size={24} color="#6b7280" />
+                <X size={20} color="#6b7280" />
               </button>
 
               <div style={{ 
-                width: '100px', 
-                height: '100px', 
-                margin: '0 auto 1.5rem',
+                width: '80px', 
+                height: '80px', 
+                margin: '0 auto 1rem',
                 background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
               }}>
-                <CheckCircle size={60} color="white" strokeWidth={3} />
+                <CheckCircle size={48} color="white" strokeWidth={3} />
               </div>
 
-              <h2 className="text-2xl font-bold mb-2" style={{ color: '#059669' }}>آرڈر مکمل!</h2>
-              <p style={{ color: '#6b7280', marginBottom: '1.5rem', fontSize: '0.9rem' }}>آپ کا آرڈر کامیابی سے محفوظ ہو گیا</p>
+              <h2 className="text-xl font-bold mb-1" style={{ color: '#059669' }}>آرڈر مکمل!</h2>
+              <p style={{ color: '#6b7280', marginBottom: '1rem', fontSize: '0.8rem' }}>آپ کا آرڈر کامیابی سے محفوظ ہو گیا</p>
               
               <div style={{ 
                 background: '#f9fafb', 
-                borderRadius: '0.75rem', 
-                padding: '1.5rem',
-                marginBottom: '1.5rem',
+                borderRadius: '0.5rem', 
+                padding: '1rem',
+                marginBottom: '1rem',
                 border: '2px solid #10b981'
               }}>
-                <div style={{ marginBottom: '1rem' }}>
-                  <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.5rem' }}>آرڈر نمبر</p>
-                  <p className="font-bold text-lg" style={{ 
+                <div style={{ marginBottom: '0.75rem' }}>
+                  <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>آرڈر نمبر</p>
+                  <p className="font-bold" style={{ 
                     fontFamily: 'monospace',
                     background: 'white',
-                    padding: '0.5rem',
-                    borderRadius: '0.5rem'
+                    padding: '0.4rem',
+                    borderRadius: '0.4rem',
+                    fontSize: '0.9rem'
                   }}>
                     {completedOrder.orderNumber}
                   </p>
                 </div>
                 
-                <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
-                  <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.5rem' }}>کل رقم</p>
-                  <p className="text-2xl font-bold" style={{ color: '#059669' }}>
+                <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '0.75rem' }}>
+                  <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>کل رقم</p>
+                  <p className="text-xl font-bold" style={{ color: '#059669' }}>
                     Rs. {completedOrder.totalAmount.toFixed(2)}
                   </p>
                 </div>
@@ -409,51 +398,51 @@ export default function POSPage() {
       {/* Error Modal */}
       {showErrorModal && (
         <div className="modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowErrorModal(false); }}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
-            <div style={{ textAlign: 'center' }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="order-confirmation">
               <button 
                 onClick={() => setShowErrorModal(false)}
                 style={{
                   position: 'absolute',
-                  top: '1rem',
-                  left: '1rem',
+                  top: '0.75rem',
+                  left: '0.75rem',
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
                   padding: '0.25rem'
                 }}
               >
-                <X size={24} color="#6b7280" />
+                <X size={20} color="#6b7280" />
               </button>
 
               <div style={{ 
-                width: '80px', 
-                height: '80px', 
-                margin: '0 auto 1.5rem',
+                width: '60px', 
+                height: '60px', 
+                margin: '0 auto 1rem',
                 background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
               }}>
-                <AlertCircle size={48} color="white" />
+                <AlertCircle size={32} color="white" />
               </div>
 
-              <h2 className="text-xl font-bold mb-2" style={{ color: '#dc2626' }}>خرابی!</h2>
-              <p style={{ color: '#6b7280', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+              <h2 className="text-lg font-bold mb-1" style={{ color: '#dc2626' }}>خرابی!</h2>
+              <p style={{ color: '#6b7280', marginBottom: '1rem', fontSize: '0.8rem' }}>
                 {errorMessage}
               </p>
 
               <div style={{ 
                 background: '#fee2e2', 
                 border: '2px solid #dc2626',
-                borderRadius: '0.5rem',
-                padding: '0.75rem',
-                marginBottom: '1.5rem',
-                fontSize: '0.85rem',
+                borderRadius: '0.4rem',
+                padding: '0.6rem',
+                marginBottom: '1rem',
+                fontSize: '0.75rem',
                 textAlign: 'right'
               }}>
-                <p className="font-bold" style={{ marginBottom: '0.5rem' }}>چیک کریں:</p>
+                <p className="font-bold" style={{ marginBottom: '0.25rem' }}>چیک کریں:</p>
                 <ul style={{ listStyle: 'none', padding: 0 }}>
                   <li>✓ بیک اینڈ چل رہا ہے (http://localhost:8000)</li>
                   <li>✓ انٹرنیٹ کنکشن فعال ہے</li>
